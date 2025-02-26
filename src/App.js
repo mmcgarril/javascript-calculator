@@ -94,7 +94,7 @@ class App extends Component {
       })
     }
     //don't allow consecutive decimals
-    if (this.state.display != '.') {
+    if (!this.state.display.includes('.')) {
         this.setState((state) => {
             const currentInput = state.history
             const currentResult = state.display
@@ -121,8 +121,9 @@ class App extends Component {
       this.nextOperation(char)
     }
     else {
-      //replaces a previous operator
       const prevChar = this.state.history[this.state.history.length - 1]
+      const secondPrevChar = this.state.history[this.state.history.length - 2]
+      //replaces a previous operator
       if (this.operators.includes(prevChar)) {
         this.setState((state) => {
           const currentHistory = state.history
@@ -130,6 +131,15 @@ class App extends Component {
             history: currentHistory.slice(0, -1)
           }
         })
+        //replaces second previous operator (in case user input is digit, operator, minus, opertator)
+        if (this.operators.includes(secondPrevChar)) {
+          this.setState((state) => {
+            const currentHistory = state.history
+            return {
+              history: currentHistory.slice(0, -1)
+            }
+          })
+        }
       }
       this.setState((state) => {
         const currentHistory = state.history
@@ -207,13 +217,13 @@ class App extends Component {
           const index = historyArray.indexOf('/');
           historyArray.splice(index - 1, 3, this.divide(parseFloat(historyArray[index - 1]), parseFloat(historyArray[index + 1])).toFixed(15))
         }
-        while (historyArray.includes('+')) {
-          const index = historyArray.indexOf('+');
-          historyArray.splice(index - 1, 3, this.add(parseFloat(historyArray[index - 1]), parseFloat(historyArray[index + 1])))
-        }
         while (historyArray.includes('-')) {
           const index = historyArray.indexOf('-');
           historyArray.splice(index - 1, 3, this.subtract(parseFloat(historyArray[index - 1]), parseFloat(historyArray[index + 1])))
+        }
+        while (historyArray.includes('+')) {
+          const index = historyArray.indexOf('+');
+          historyArray.splice(index - 1, 3, this.add(parseFloat(historyArray[index - 1]), parseFloat(historyArray[index + 1])))
         }
         //remove trailing zeros or useless decimal point
         let answer = historyArray[0].toString()
