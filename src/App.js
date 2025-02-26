@@ -49,7 +49,7 @@ class App extends Component {
           display: ''
         })
       }
-      if (char == '0' && this.state.history == '') {
+      if (char === '0' && this.state.history === '') {
         this.setState({
             history: '0',
             display: '0'
@@ -63,7 +63,7 @@ class App extends Component {
               }
           })
         }
-        if (this.state.display == '0') {
+        if (this.state.display === '0') {
           this.setState({
             history: '',
             display: ''
@@ -86,7 +86,7 @@ class App extends Component {
       this.handleClear()
     }
     //add zero 
-    if (this.state.history == '' || this.operators.includes(this.state.display)) {
+    if (this.state.history === '' || this.operators.includes(this.state.display)) {
       const currentHistory = this.state.history
       this.setState({
         history: currentHistory + '0',
@@ -158,7 +158,7 @@ class App extends Component {
     else {
       //only replaces + or -, becomes negative symbol following * or /
       const prevChar = this.state.history[this.state.history.length - 1]
-      if (prevChar == '-') {
+      if (prevChar === '-') {
         this.setState((state) => {
           const currentHistory = state.history
           return {
@@ -195,11 +195,11 @@ class App extends Component {
             historyArray[counter] = ''
           }
           //for digit or decimal, add to array but don't increment counter
-          if (currentHistory[i].match(regex) || currentHistory[i] == '.') {
+          if (currentHistory[i].match(regex) || currentHistory[i] === '.') {
             historyArray[counter] += currentHistory[i]
           }
           //for '-', add and don't increment only if used as negative (first char or following another operator)
-          else if (currentHistory[i] == '-' && (i == 0 || this.operators.includes(currentHistory[i - 1]))) {
+          else if (currentHistory[i] === '-' && (i === 0 || this.operators.includes(currentHistory[i - 1]))) {
             historyArray[counter] += currentHistory[i]
           }
           else {
@@ -227,7 +227,7 @@ class App extends Component {
         }
         //remove trailing zeros or useless decimal point
         let answer = historyArray[0].toString()
-        while ((answer.includes('.') && answer.charAt(answer.length - 1) == '0') || answer[answer.length -1] == '.') {
+        while ((answer.includes('.') && answer.charAt(answer.length - 1) === '0') || answer[answer.length -1] === '.') {
           answer = answer.slice(0, -1)
         }
 
