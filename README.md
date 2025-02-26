@@ -1,6 +1,6 @@
 # Javascript Calculator
 
-A simple calculator app built with React. This project was taken from FreeCodeCamp's Front End Development Libraries course.
+A simple calculator app built with React. This project was taken from FreeCodeCamp's Front End Development Libraries course. Live site: https://mmcgarril-javascript-calculator.netlify.app/
 
 ## Available Scripts
 
