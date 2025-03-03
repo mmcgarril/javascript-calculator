@@ -104,6 +104,7 @@ class App extends Component {
         })  
     }   
   }
+  
   //reuse diplay, clear history
   nextOperation = (char) => {
     this.setState((state) => {
@@ -116,29 +117,52 @@ class App extends Component {
   }
     
   handleOperator(char) {   
+    //add zero if history doesn't exist to allow for 0 + num, or 0 * num, etc
+    if (!this.state.history) {
+      this.setState((state) => {
+        return {
+          history: '0'
+        }
+      })
+    }
+
     if (this.state.history.includes('=')) {
+      //guard clause to reset if answer is infinity or Nan
+      if (this.state.display === 'Infinity' || this.state.display === 'NaN') {
+        this.handleClear()
+        return
+      }
       this.nextOperation(char)
     }
     else {
       const prevChar = this.state.history[this.state.history.length - 1]
       const secondPrevChar = this.state.history[this.state.history.length - 2]
-      //replaces a previous operator
+      
       if (this.operators.includes(prevChar)) {
-        this.setState((state) => {
-          const currentHistory = state.history
-          return {
-            history: currentHistory.slice(0, -1)
-          }
-        })
-        //replaces second previous operator (in case user input is digit, operator, minus, opertator)
-        if (this.operators.includes(secondPrevChar)) {
+        //replaces a previous operator, only if new operator is + * /
+        if (char !== '-') {
           this.setState((state) => {
             const currentHistory = state.history
             return {
               history: currentHistory.slice(0, -1)
             }
           })
+          //replaces second previous operator (in case user input is digit, operator, minus, operator)
+          if (this.operators.includes(secondPrevChar)) {
+  
+            this.setState((state) => {
+              const currentHistory = state.history
+              return {
+                history: currentHistory.slice(0, -1)
+              }
+            })
+          }
         }
+        //char is -, so only add char if there is 1 prev operator, not 2
+        else if (this.operators.includes(secondPrevChar) || !secondPrevChar) {
+          return
+        }
+        
       }
       this.setState((state) => {
         const currentHistory = state.history
@@ -150,34 +174,16 @@ class App extends Component {
     }       
   }
 
-  handleMinus(char) {
-    if (this.state.history.includes('=')) {
-      this.nextOperation(char)
-    }
-    else {
-      //only replaces + or -, becomes negative symbol following * or /
-      const prevChar = this.state.history[this.state.history.length - 1]
-      if (prevChar === '-') {
-        this.setState((state) => {
-          const currentHistory = state.history
-          return {
-            history: currentHistory.slice(0, -1)
-          }
-        })
-      }
-      this.setState((state) => {
-        const currentHistory = state.history
-        return {
-          history: currentHistory + char,
-          display: char
-        }
-      })
-    }
-  }
-
   handleEquals() {
     this.setState((state) => {
       let currentHistory = state.history
+      //guard clause to handle cases when no numbers are inputted
+      if (currentHistory === '' || currentHistory === '.') {
+        return {
+          history: '0',
+          display: '0'
+        }
+      }
       //disable entering equal twice in a row
       if (!currentHistory.includes('=')) {
         //if last char is * / + -, remove
@@ -256,7 +262,7 @@ class App extends Component {
         <button id="seven" class="square dark-grey btn" disabled={this.state.disabled} value="7" onClick={(e) => this.handleNum(e.target.value)}>7</button>
         <button id="eight" class="square dark-grey btn" disabled={this.state.disabled} value="8" onClick={(e) => this.handleNum(e.target.value)}>8</button>
         <button id="nine" class="square dark-grey btn"  disabled={this.state.disabled} value="9" onClick={(e) => this.handleNum(e.target.value)}>9</button>
-        <button id="subtract" class="square light-grey btn" disabled={this.state.disabled} value="-" onClick={(e) => this.handleMinus(e.target.value)}>-</button>
+        <button id="subtract" class="square light-grey btn" disabled={this.state.disabled} value="-" onClick={(e) => this.handleOperator(e.target.value)}>-</button>
         <button id="four" class="square dark-grey btn" disabled={this.state.disabled} value="4" onClick={(e) => this.handleNum(e.target.value)}>4</button>
         <button id="five" class="square dark-grey btn" disabled={this.state.disabled} value="5" onClick={(e) => this.handleNum(e.target.value)}>5</button>        
         <button id="six" class="square dark-grey btn" disabled={this.state.disabled} value="6" onClick={(e) => this.handleNum(e.target.value)}>6</button>
